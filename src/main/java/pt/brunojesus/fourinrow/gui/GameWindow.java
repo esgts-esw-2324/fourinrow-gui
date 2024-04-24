@@ -5,18 +5,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * The GameWindow representing a Four in a Row game.
+ * Requires a graphical display
+ */
 public class GameWindow extends JFrame {
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 7253238536622895506L;
 	private static final int ROWS = 6;
     private static final int COLS = 7;
     private JButton[][] boardButtons;
-    private IForInRow board;
+    private IBoard board;
 
-    public GameWindow(IForInRow board) {
+    /**
+     * The GameWindow constructor
+     *
+     * @param board The board logic implementation
+     */
+    public GameWindow(IBoard board) {
     	this.board = board;
+        init();
+    }
+
+    private void init() {
         setTitle("Four in a Row");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(ROWS + 1, COLS));
@@ -28,16 +38,10 @@ public class GameWindow extends JFrame {
                 boardButtons[row][col] = new JButton();
                 boardButtons[row][col].setBackground(Color.WHITE);
                 boardButtons[row][col].setOpaque(true);
-                final int finalRow = row;
                 final int finalCol = col;
-                boardButtons[row][col].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                    	board.play(finalCol);
-                    	update(finalCol);
-                        // Handle button click
-//                        JOptionPane.showMessageDialog(null, "Button clicked: Row " + (finalRow + 1) + ", Column " + (finalCol + 1));
-                    }
+                boardButtons[row][col].addActionListener(e -> {
+                    board.play(finalCol);
+                    update(finalCol);
                 });
                 add(boardButtons[row][col]);
             }
@@ -57,9 +61,11 @@ public class GameWindow extends JFrame {
         setVisible(true);
     }
     
-    public void update(int col) {
+    private void update(int col) {
     	for (int row = 0; row < ROWS; row++) {
-    		boardButtons[row][col].setBackground(board.getItemInPosition(row, col));
+            Color color = board.getItemInPosition(row, col);
+            color = color == null ? Color.WHITE : color;
+    		boardButtons[row][col].setBackground(color);
     	}
     }
 
@@ -69,14 +75,5 @@ public class GameWindow extends JFrame {
                 boardButtons[row][col].setBackground(Color.WHITE);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GameWindow(new Board());
-            }
-        });
     }
 }

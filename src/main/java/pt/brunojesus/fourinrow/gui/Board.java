@@ -2,7 +2,7 @@ package pt.brunojesus.fourinrow.gui;
 
 import java.awt.Color;
 
-public class Board implements IForInRow {
+public class Board implements IBoard {
 	
 	private static final int ROWS = 6;
     private static final int COLS = 7;
